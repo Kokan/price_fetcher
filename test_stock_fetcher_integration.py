@@ -13,6 +13,6 @@ def test_fetch_first_day_of_month_price_real_api():
     assert result is not None, "API call failed or no data available."
     assert isinstance(result["price"], float), "Price is not a valid float."
     assert result["price"] > 0, "Price should be greater than zero."
-    assert isinstance(result["date"], Timestamp), "Date is not a Timestamp."
-    assert result["date"] == Timestamp('2024-01-02 00:00:00'), "Date is not the first trading day of the month."
+    assert isinstance(result["date"], str), "Date is not a str."
+    assert result["date"] == '2024-01-02 00:00:00', "Date is not the first trading day of the month."
 
