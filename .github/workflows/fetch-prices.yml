@@ -32,10 +32,13 @@ jobs:
       - name: Fetch and store prices
         run: poetry run python store_prices.py
 
+      - name: Validate generated Beancount files
+        run: poetry run python validate_prices.py
+
       - name: Commit price updates
         run: |
           shopt -s nullglob
-          price_files=([0-9][0-9][0-9][0-9]/*.beancount)
+          price_files=(prices/[0-9][0-9][0-9][0-9]/*.beancount)
           if [ ${#price_files[@]} -eq 0 ]; then
             echo "No price files were generated."
             exit 0

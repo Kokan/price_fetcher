@@ -178,7 +178,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--output-dir",
-        default=Path("."),
+        default=Path("prices"),
         type=Path,
         help="Directory where <year>/<ticker>.beancount files are stored",
     )

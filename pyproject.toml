@@ -13,6 +13,7 @@ yfinance = "^0.2.51"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.0"
+beancount = "^3.2.2"
 
 [tool.pytest.ini_options]
 testpaths = ["."]
