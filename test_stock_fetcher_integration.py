@@ -94,7 +94,7 @@ def test_parse_commodities_uses_ticker_metadata(tmp_path):
 
 def test_convert_prices_skips_missing_exchange_rates(monkeypatch):
     def fake_fetch_exchange_rate(from_currency, to_currency, year, month):
-        rates = {"EUR": 1.0, "HUF": None}
+        rates = {"HUF": None}
         return rates[to_currency]
 
     monkeypatch.setattr(fetch_prices, "fetch_exchange_rate", fake_fetch_exchange_rate)
@@ -106,4 +106,24 @@ def test_convert_prices_skips_missing_exchange_rates(monkeypatch):
         ["EUR", "HUF"],
     )
 
-    assert converted == {"EUR": 10.0}
+    assert converted == {}
+
+
+def test_convert_prices_skips_native_currency(monkeypatch):
+    calls = []
+
+    def fake_fetch_exchange_rate(from_currency, to_currency, year, month):
+        calls.append((from_currency, to_currency))
+        return 350.0
+
+    monkeypatch.setattr(fetch_prices, "fetch_exchange_rate", fake_fetch_exchange_rate)
+
+    converted = fetch_prices.convert_prices(
+        Ticker("VWCE.DE", 10.0, "EUR", "2024-01-02"),
+        2024,
+        1,
+        ["EUR", "HUF"],
+    )
+
+    assert converted == {"HUF": 3500.0}
+    assert calls == [("EUR", "HUF")]

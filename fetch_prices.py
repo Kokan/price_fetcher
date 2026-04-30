@@ -83,6 +83,9 @@ def convert_prices(
 ) -> dict[str, float]:
     converted = {}
     for target_currency in target_currencies:
+        if target_currency == stock_data.currency:
+            continue
+
         rate = fetch_exchange_rate(stock_data.currency, target_currency, year, month)
         if rate is not None:
             converted[target_currency] = stock_data.price * rate
