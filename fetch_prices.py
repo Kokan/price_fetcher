@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from datetime import datetime
-from fetch_price import fetch_first_day_of_month_price
+from datetime import date, datetime
+from fetch_price import fetch_first_day_of_month_price, fetch_price_for_date
 from ticker import Ticker
 import argparse
 from pathlib import Path
@@ -78,6 +78,20 @@ def fetch_exchange_rate(
     return result.price
 
 
+def fetch_exchange_rate_for_date(
+    from_currency: str, to_currency: str, price_date: date
+) -> Optional[float]:
+    if from_currency == to_currency:
+        return 1
+
+    ticker = f"{from_currency}{to_currency}=X"
+    result = fetch_price_for_date(ticker, price_date)
+    if result is None:
+        print(f"Error fetching exchange rate {from_currency} to {to_currency}")
+        return None
+    return result.price
+
+
 def convert_prices(
     stock_data: Ticker, year: int, month: int, target_currencies: list[str]
 ) -> dict[str, float]:
@@ -87,6 +101,22 @@ def convert_prices(
             continue
 
         rate = fetch_exchange_rate(stock_data.currency, target_currency, year, month)
+        if rate is not None:
+            converted[target_currency] = stock_data.price * rate
+    return converted
+
+
+def convert_prices_for_date(
+    stock_data: Ticker, price_date: date, target_currencies: list[str]
+) -> dict[str, float]:
+    converted = {}
+    for target_currency in target_currencies:
+        if target_currency == stock_data.currency:
+            continue
+
+        rate = fetch_exchange_rate_for_date(
+            stock_data.currency, target_currency, price_date
+        )
         if rate is not None:
             converted[target_currency] = stock_data.price * rate
     return converted

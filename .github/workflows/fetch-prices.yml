@@ -1,0 +1,53 @@
+name: Fetch Daily Prices
+
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-prices:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+
+      - name: Fetch and store prices
+        run: poetry run python store_prices.py
+
+      - name: Commit price updates
+        run: |
+          shopt -s nullglob
+          price_files=([0-9][0-9][0-9][0-9]/*.beancount)
+          if [ ${#price_files[@]} -eq 0 ]; then
+            echo "No price files were generated."
+            exit 0
+          fi
+
+          git add -- "${price_files[@]}"
+          if git diff --cached --quiet; then
+            echo "No price updates to commit."
+          else
+            git \
+              -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "Update daily prices"
+            git push
+          fi

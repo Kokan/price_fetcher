@@ -56,6 +56,17 @@ Use a different commodity file or converted currencies with:
 poetry run python fetch_prices.py 2024 1 --commodities ledger.beancount --target-currency EUR --target-currency HUF
 ```
 
+Store daily prices in yearly Beancount files:
+
+```bash
+poetry run python store_prices.py --date 2026-04-30
+```
+
+This writes one file per commodity, for example `2026/VWCE.beancount`, and
+maintains `2026/main.beancount` with includes for that year's commodity files.
+The GitHub Actions workflow runs this command daily and commits changed price
+files when new prices are available.
+
 Tests
 -----
 

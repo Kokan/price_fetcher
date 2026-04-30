@@ -1,3 +1,4 @@
+from datetime import date
 import json
 from types import SimpleNamespace
 
@@ -80,6 +81,23 @@ def test_fetch_first_day_of_month_price_handles_single_level_close(monkeypatch):
     result = fetch_price.fetch_first_day_of_month_price("VWCE.DE", 2024, 1)
 
     assert result == Ticker("VWCE.DE", 42.5, "EUR", "2024-01-02")
+
+
+def test_fetch_price_for_date_uses_requested_date(monkeypatch):
+    def fake_download(ticker, start, end, rounding, interval, auto_adjust, progress):
+        assert start == "2024-01-03"
+        assert end == "2024-01-04"
+        return pandas.DataFrame(
+            {"Close": [43.5]},
+            index=[pandas.Timestamp("2024-01-03")],
+        )
+
+    monkeypatch.setattr(fetch_price.yfinance, "Ticker", FakeYFinanceTicker)
+    monkeypatch.setattr(fetch_price.yfinance, "download", fake_download)
+
+    result = fetch_price.fetch_price_for_date("VWCE.DE", date(2024, 1, 3))
+
+    assert result == Ticker("VWCE.DE", 43.5, "EUR", "2024-01-03")
 
 
 def test_parse_commodities_uses_ticker_metadata(tmp_path):

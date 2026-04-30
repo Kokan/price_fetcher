@@ -1,25 +1,19 @@
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from typing import Optional
 from ticker import Ticker, format_json, format_beancount, format_text
 import argparse
-import pandas
 import yfinance
 
 
-def fetch_first_day_of_month_price(
-    ticker: str, year: int, month: int
+def fetch_first_available_price(
+    ticker: str, start_date: date, end_date: date
 ) -> Optional[Ticker]:
     try:
-        first_day_of_month = datetime(year, month, 1)
-
-        start_date = first_day_of_month.strftime("%Y-%m-%d")
-        end_date = (first_day_of_month + pandas.Timedelta(days=7)).strftime("%Y-%m-%d")
-
         currency = yfinance.Ticker(ticker).info["currency"]
         stock_data = yfinance.download(
             ticker,
-            start=start_date,
-            end=end_date,
+            start=start_date.strftime("%Y-%m-%d"),
+            end=end_date.strftime("%Y-%m-%d"),
             rounding=True,
             interval="1d",
             auto_adjust=False,
@@ -46,6 +40,19 @@ def fetch_first_day_of_month_price(
     except Exception as e:
         print(f"; An error occurred for ticker {ticker}: {e}")
         return None
+
+
+def fetch_price_for_date(ticker: str, price_date: date) -> Optional[Ticker]:
+    return fetch_first_available_price(ticker, price_date, price_date + timedelta(days=1))
+
+
+def fetch_first_day_of_month_price(
+    ticker: str, year: int, month: int
+) -> Optional[Ticker]:
+    first_day_of_month = date(year, month, 1)
+    return fetch_first_available_price(
+        ticker, first_day_of_month, first_day_of_month + timedelta(days=7)
+    )
 
 
 def main(args):
