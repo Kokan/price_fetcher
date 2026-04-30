@@ -1,0 +1,4 @@
+include "2023/main.beancount"
+include "2024/main.beancount"
+include "2025/main.beancount"
+include "2026/main.beancount"

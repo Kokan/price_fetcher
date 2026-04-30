@@ -114,6 +114,15 @@ def update_year_main(year_dir: Path) -> None:
     (year_dir / "main.beancount").write_text("\n".join(includes) + "\n")
 
 
+def update_prices_main(prices_dir: Path) -> None:
+    includes = [
+        f'include "{year_dir.name}/main.beancount"'
+        for year_dir in sorted(path for path in prices_dir.iterdir() if path.is_dir())
+        if (year_dir / "main.beancount").exists()
+    ]
+    (prices_dir / "main.beancount").write_text("\n".join(includes) + "\n")
+
+
 def price_lines_for_commodity(
     commodity: Commodity,
     stock_data: Ticker,
@@ -138,6 +147,7 @@ def store_price_lines(output_dir: Path, symbol: str, lines: list[str]) -> None:
     year_dir.mkdir(parents=True, exist_ok=True)
     upsert_price_lines(year_dir / f"{symbol}.beancount", lines)
     update_year_main(year_dir)
+    update_prices_main(output_dir)
 
 
 def store_commodity_prices(output_dir: Path, commodity: Commodity, lines: list[str]) -> None:

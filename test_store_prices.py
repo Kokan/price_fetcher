@@ -61,6 +61,9 @@ def test_store_commodity_prices_writes_year_file_and_main(tmp_path):
     assert (tmp_path / "2026" / "main.beancount").read_text() == (
         'include "VWCE.beancount"\n'
     )
+    assert (tmp_path / "main.beancount").read_text() == (
+        'include "2026/main.beancount"\n'
+    )
 
 
 def test_fetch_and_store_prices_writes_fetched_prices(monkeypatch, tmp_path):
@@ -153,6 +156,9 @@ def test_fetch_and_store_prices_writes_currency_rates(monkeypatch, tmp_path):
         'include "EUR.beancount"',
         'include "VWCE.beancount"',
     ]
+    assert (tmp_path / "main.beancount").read_text() == (
+        'include "2026/main.beancount"\n'
+    )
 
 
 def test_format_existing_price_line_aligns_price_columns():

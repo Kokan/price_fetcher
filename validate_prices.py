@@ -5,7 +5,10 @@ from beancount import loader
 
 
 def validate_prices(prices_dir: Path) -> int:
-    main_files = sorted(prices_dir.glob("*/main.beancount"))
+    root_main = prices_dir / "main.beancount"
+    main_files = (
+        [root_main] if root_main.exists() else sorted(prices_dir.glob("*/main.beancount"))
+    )
     if not main_files:
         print(f"No yearly main.beancount files found under {prices_dir}")
         return 0

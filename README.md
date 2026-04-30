@@ -64,7 +64,8 @@ poetry run python store_prices.py --date 2026-04-30
 
 This writes one file per commodity, for example `prices/2026/VWCE.beancount`,
 and maintains `prices/2026/main.beancount` with includes for that year's
-commodity files.
+commodity files. It also maintains `prices/main.beancount` with includes for
+each year, adding new years automatically when they are first generated.
 It also stores EUR/HUF and USD/HUF exchange rates, for example
 `prices/2026/EUR.beancount` and `prices/2026/USD.beancount`.
 The GitHub Actions workflow runs this command daily and commits changed price
