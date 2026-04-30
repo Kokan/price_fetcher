@@ -1,3 +1,4 @@
+.venv/
 .yfinance-cache/
 __pycache__/
 *.pyc
