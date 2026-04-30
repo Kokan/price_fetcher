@@ -62,7 +62,6 @@
   name: "Unvested share of Nokia Oyj"
   asset-class: "stock"
   quote: EUR
-  ticker: "NOKIA.HE"
 2024-07-01 commodity NOKIA
   name: "Nokia Oyj"
   asset-class: "stock"
