@@ -1,15 +1,31 @@
+import json
+from types import SimpleNamespace
+
 import pandas
 
 import fetch_price
 import fetch_prices
 from fetch_prices import Commodity
-from ticker import Ticker
+from ticker import Ticker, format_beancount, format_json, format_text
 
 
 class FakeYFinanceTicker:
     def __init__(self, ticker):
         self.ticker = ticker
         self.info = {"currency": "EUR"}
+
+
+def test_ticker_formatters():
+    ticker = Ticker("VWCE.DE", 99.12, "EUR", "2024-01-02")
+
+    assert json.loads(format_json(ticker)) == {
+        "name": "VWCE.DE",
+        "price": 99.12,
+        "currency": "EUR",
+        "date": "2024-01-02",
+    }
+    assert format_beancount(ticker) == "2024-01-02 price VWCE.DE\t99.12 EUR"
+    assert format_text(ticker) == "Ticker: VWCE.DE Price: 99.12 Date: 2024-01-02"
 
 
 def test_fetch_first_day_of_month_price_uses_first_available_close(monkeypatch):
@@ -127,3 +143,78 @@ def test_convert_prices_skips_native_currency(monkeypatch):
 
     assert converted == {"HUF": 3500.0}
     assert calls == [("EUR", "HUF")]
+
+
+def test_fetch_exchange_rate_returns_none_when_price_fetch_fails(monkeypatch, capsys):
+    monkeypatch.setattr(
+        fetch_prices,
+        "fetch_first_day_of_month_price",
+        lambda ticker, year, month: None,
+    )
+
+    rate = fetch_prices.fetch_exchange_rate("EUR", "HUF", 2024, 1)
+
+    assert rate is None
+    assert "Error fetching exchange rate EUR to HUF" in capsys.readouterr().out
+
+
+def test_fetch_price_main_prints_json(monkeypatch, capsys):
+    monkeypatch.setattr(fetch_price.yfinance, "set_tz_cache_location", lambda cache: None)
+    monkeypatch.setattr(
+        fetch_price,
+        "fetch_first_day_of_month_price",
+        lambda ticker, year, month: Ticker(ticker, 99.12, "EUR", "2024-01-02"),
+    )
+
+    result = fetch_price.main(
+        SimpleNamespace(
+            ticker="VWCE.DE",
+            year=2024,
+            month=1,
+            cache=".yfinance-cache/",
+            beancount=False,
+            json=True,
+        )
+    )
+
+    assert result is None
+    assert json.loads(capsys.readouterr().out) == {
+        "name": "VWCE.DE",
+        "price": 99.12,
+        "currency": "EUR",
+        "date": "2024-01-02",
+    }
+
+
+def test_fetch_prices_main_prints_native_and_converted_prices_once(
+    monkeypatch, capsys
+):
+    monkeypatch.setattr(
+        fetch_prices,
+        "parse_commodities",
+        lambda path: [Commodity(symbol="VWCE", ticker="VWCE.DE")],
+    )
+    monkeypatch.setattr(
+        fetch_prices,
+        "fetch_stock_price",
+        lambda ticker, year, month: Ticker(ticker, 10.0, "EUR", "2024-01-02"),
+    )
+    monkeypatch.setattr(
+        fetch_prices,
+        "convert_prices",
+        lambda stock_data, year, month, target_currencies: {"HUF": 3500.0},
+    )
+
+    fetch_prices.main(
+        SimpleNamespace(
+            commodities="commodities.beancount",
+            year=2024,
+            month=1,
+            target_currencies=["EUR", "HUF"],
+        )
+    )
+
+    assert capsys.readouterr().out.splitlines() == [
+        "2024-01-02 price VWCE   10.00 EUR",
+        "2024-01-02 price VWCE   3500.00 HUF",
+    ]
