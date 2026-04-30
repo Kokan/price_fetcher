@@ -1,0 +1,28 @@
+;; 2025 VWCE.DE prices
+
+2025-01-02 price VWCE                     135.48 EUR
+2025-02-02 price VWCE                     137.16 EUR
+2025-03-03 price VWCE                     136.10 EUR
+2025-04-01 price VWCE                     127.52 EUR
+2025-05-02 price VWCE                     124.14 EUR
+2025-06-02 price VWCE                     127.96 EUR
+2025-07-01 price VWCE   129.78 EUR ; 152.60 EUR for just one day, but that probably flash information
+2025-08-01 price VWCE                     132.04 EUR
+2025-09-01 price VWCE                     135.88 EUR
+2025-10-01 price VWCE                     140.50 EUR
+2025-11-03 price VWCE                     145.78 EUR
+2025-12-01 price VWCE                     144.30 EUR
+
+2025-01-02 price VWCE           (135.48*410.284) HUF
+2025-02-03 price VWCE           (137.16*408.080) HUF
+2025-03-03 price VWCE                   54619.65 HUF
+2025-04-01 price VWCE                   51251.56 HUF
+2025-05-02 price VWCE                   50147.97 HUF
+2025-06-02 price VWCE                   51626.61 HUF
+2025-07-01 price VWCE                   51792.73 HUF
+2025-08-01 price VWCE                   52748.53 HUF
+2025-09-01 price VWCE                   53848.29 HUF
+2025-10-01 price VWCE                   54727.70 HUF
+2025-11-03 price VWCE                   56520.80 HUF
+2025-12-01 price VWCE                   55009.76 HUF
+

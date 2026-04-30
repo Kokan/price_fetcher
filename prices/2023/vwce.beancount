@@ -1,0 +1,28 @@
+;; 2023 VWCE.DE prices
+
+2023-01-02 price VWCE                      92.26 EUR
+2023-02-01 price VWCE                      95.08 EUR
+2023-03-01 price VWCE                      94.38 EUR
+2023-04-03 price VWCE                      95.51 EUR
+2023-05-02 price VWCE                      94.43 EUR
+2023-06-01 price VWCE                      98.08 EUR
+2023-07-03 price VWCE                      101.3 EUR
+2023-08-01 price VWCE                      103.4 EUR
+2023-09-01 price VWCE                      103.1 EUR
+2023-10-02 price VWCE                      101.0 EUR
+2023-11-01 price VWCE                      98.73 EUR
+2023-12-01 price VWCE                     104.12 EUR
+
+2023-01-02 price VWCE	( 92.26*397.81) HUF
+2023-02-01 price VWCE	( 95.08*390.88) HUF
+2023-03-01 price VWCE	( 94.38*377.89) HUF
+2023-04-03 price VWCE	( 95.51*380.34) HUF
+2023-05-02 price VWCE	( 94.43*372.50) HUF
+2023-06-01 price VWCE	( 98.08*370.34) HUF
+2023-07-03 price VWCE	( 101.3*372.50) HUF
+2023-08-01 price VWCE	( 103.4*387.01) HUF
+2023-09-01 price VWCE	( 103.1*380.77) HUF
+2023-10-02 price VWCE	( 101.0*389.51) HUF
+2023-11-01 price VWCE	( 98.73*382.34) HUF
+2023-12-01 price VWCE            (104.12*379.95) HUF
+

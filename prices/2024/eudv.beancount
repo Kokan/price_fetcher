@@ -1,0 +1,28 @@
+;; 2024 EUDV prices
+
+2024-01-02 price EUDV                      21.96 EUR
+2024-02-01 price EUDV                      21.89 EUR
+2024-03-01 price EUDV                      22.23 EUR
+2024-04-02 price EUDV                      22.87 EUR
+2024-05-02 price EUDV                      23.18 EUR
+2024-06-03 price EUDV                      24.38 EUR
+2024-07-01 price EUDV                      23.73 EUR
+2024-08-01 price EUDV                      23.89 EUR
+2024-09-02 price EUDV                      24.84 EUR
+2024-10-01 price EUDV                      25.07 EUR
+2024-11-01 price EUDV                      24.46 EUR
+2024-12-02 price EUDV                      24.16 EUR
+
+2024-01-02 price EUDV             (21.96*382.11) HUF
+2024-02-01 price EUDV             (21.89*383.46) HUF
+2024-03-01 price EUDV             (22.23*392.36) HUF
+2024-04-02 price EUDV             (22.87*394.45) HUF
+2024-05-02 price EUDV             (23.18*390.64) HUF
+2024-06-03 price EUDV             (24.38*389.48) HUF
+2024-07-01 price EUDV             (23.73*394.61) HUF
+2024-08-01 price EUDV             (23.89*393.69) HUF
+2024-09-02 price EUDV             (24.84*392.54) HUF
+2024-10-01 price EUDV             (25.07*396.67) HUF
+2024-11-01 price EUDV             (24.46*408.24) HUF
+2024-12-02 price EUDV             (24.16*412.10) HUF
+

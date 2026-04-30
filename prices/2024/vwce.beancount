@@ -1,0 +1,28 @@
+;; 2024 VWCE.DE prices
+
+2024-01-02 price VWCE                     107.04 EUR
+2024-02-01 price VWCE                     109.76 EUR
+2024-03-01 price VWCE                     115.04 EUR
+2024-04-02 price VWCE                     117.45 EUR
+2024-05-02 price VWCE                     115.68 EUR
+2024-06-03 price VWCE                     118.41 EUR
+2024-07-01 price VWCE                     122.51 EUR
+2024-08-01 price VWCE                     122.23 EUR
+2024-09-02 price VWCE                     123.66 EUR
+2024-10-01 price VWCE                     125.48 EUR
+2024-11-01 price VWCE                     127.23 EUR
+2024-12-02 price VWCE                     135.75 EUR
+
+2024-01-02 price VWCE            (107.04*382.11) HUF
+2024-02-01 price VWCE            (109.76*383.46) HUF
+2024-03-01 price VWCE            (115.04*392.36) HUF
+2024-04-02 price VWCE            (117.45*394.45) HUF
+2024-05-02 price VWCE            (115.68*390.64) HUF
+2024-06-03 price VWCE            (118.41*389.48) HUF
+2024-07-01 price VWCE            (122.51*394.61) HUF
+2024-08-01 price VWCE            (122.23*393.69) HUF
+2024-09-02 price VWCE            (123.66*392.54) HUF
+2024-10-01 price VWCE            (125.48*396.67) HUF
+2024-11-01 price VWCE            (127.23*408.24) HUF
+2024-12-02 price VWCE            (135.75*412.10) HUF
+

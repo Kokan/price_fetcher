@@ -12,6 +12,8 @@ from ticker import Ticker
 
 
 DEFAULT_CURRENCY_PAIRS = (("EUR", "HUF"), ("USD", "HUF"))
+PRICE_AMOUNT_WIDTH = 18
+PRICE_SYMBOL_WIDTH = 12
 
 
 def parse_date(value: str) -> date:
@@ -21,7 +23,26 @@ def parse_date(value: str) -> date:
 def format_price_line(
     price_date: str, symbol: str, price: float, currency: str, precision: int = 2
 ) -> str:
-    return f"{price_date} price {symbol}   {price:.{precision}f} {currency}"
+    return format_price_amount(
+        price_date, symbol, f"{price:.{precision}f}", currency
+    )
+
+
+def format_price_amount(price_date: str, symbol: str, amount: str, currency: str) -> str:
+    return (
+        f"{price_date} price {symbol:<{PRICE_SYMBOL_WIDTH}} "
+        f"{amount:>{PRICE_AMOUNT_WIDTH}} {currency}"
+    )
+
+
+def format_existing_price_line(line: str) -> str:
+    key = price_line_key(line)
+    if key is None:
+        return line
+
+    price_date, symbol, currency = key
+    amount = line.split()[3]
+    return format_price_amount(price_date, symbol, amount, currency)
 
 
 def price_line_key(line: str) -> tuple[str, str, str] | None:

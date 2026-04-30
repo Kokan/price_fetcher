@@ -1,0 +1,28 @@
+;; 2023 EUDV prices
+
+2023-01-02 price EUDV                      18.88 EUR
+2023-02-01 price EUDV                      19.97 EUR
+2023-03-01 price EUDV                      20.18 EUR
+2023-04-03 price EUDV                      20.21 EUR
+2023-05-02 price EUDV                      20.63 EUR
+2023-06-01 price EUDV                      20.40 EUR
+2023-07-03 price EUDV                      20.64 EUR
+2023-08-01 price EUDV                      20.92 EUR
+2023-09-01 price EUDV                      20.94 EUR
+2023-10-02 price EUDV                      20.06 EUR
+2023-11-01 price EUDV                      19.97 EUR
+2023-12-01 price EUDV                      21.48 EUR
+
+2023-01-02 price EUDV             (18.88*397.81) HUF
+2023-02-01 price EUDV             (19.97*390.88) HUF
+2023-03-01 price EUDV             (20.18*377.89) HUF
+2023-04-03 price EUDV             (20.21*380.34) HUF
+2023-05-02 price EUDV             (20.63*372.50) HUF
+2023-06-01 price EUDV             (20.40*370.34) HUF
+2023-07-03 price EUDV             (20.64*372.50) HUF
+2023-08-01 price EUDV             (20.92*387.01) HUF
+2023-09-01 price EUDV             (20.94*380.77) HUF
+2023-10-02 price EUDV             (20.06*389.51) HUF
+2023-11-01 price EUDV             (19.97*382.34) HUF
+2023-12-01 price EUDV             (21.48*379.95) HUF
+

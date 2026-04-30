@@ -1,0 +1,27 @@
+;; 2025 EUDV.MI prices
+
+2025-01-02 price EUDV                      24.03 EUR
+2025-02-03 price EUDV                      24.76 EUR
+2025-03-03 price EUDV                      26.10 EUR
+2025-04-01 price EUDV                      26.22 EUR
+2025-05-02 price EUDV                      27.05 EUR
+2025-06-02 price EUDV                      27.66 EUR
+2025-07-02 price EUDV                      27.35 EUR
+2025-08-01 price EUDV                      26.88 EUR
+2025-09-01 price EUDV                      27.44 EUR
+2025-10-01 price EUDV                      26.65 EUR
+2025-11-03 price EUDV                      26.79 EUR
+2025-12-01 price EUDV                      27.02 EUR
+
+2025-01-02 price EUDV            (24.03*410.284) HUF
+2025-02-03 price EUDV            (24.76*408.080) HUF
+2025-03-03 price EUDV                   10474.45 HUF
+2025-04-01 price EUDV                   10538.08 HUF
+2025-05-02 price EUDV                   10927.20 HUF
+2025-06-02 price EUDV                   11159.68 HUF
+2025-07-02 price EUDV                   10914.87 HUF
+2025-08-01 price EUDV                   10738.26 HUF
+2025-09-01 price EUDV                   10874.28 HUF
+2025-10-01 price EUDV                   10380.73 HUF
+2025-11-03 price EUDV                   10386.83 HUF
+2025-12-01 price EUDV                   10300.51 HUF

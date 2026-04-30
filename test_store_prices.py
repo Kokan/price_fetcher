@@ -20,15 +20,15 @@ def test_upsert_price_lines_replaces_existing_date_currency(tmp_path):
     store_prices.upsert_price_lines(
         prices_file,
         [
-            "2026-04-30 price VWCE   145.00 EUR",
-            "2026-04-30 price VWCE   55500.00 HUF",
+            "2026-04-30 price VWCE                     145.00 EUR",
+            "2026-04-30 price VWCE                   55500.00 HUF",
         ],
     )
 
     assert prices_file.read_text().splitlines() == [
         "2026-04-29 price VWCE   143.00 EUR",
-        "2026-04-30 price VWCE   145.00 EUR",
-        "2026-04-30 price VWCE   55500.00 HUF",
+        "2026-04-30 price VWCE                     145.00 EUR",
+        "2026-04-30 price VWCE                   55500.00 HUF",
     ]
 
 
@@ -37,14 +37,14 @@ def test_store_commodity_prices_writes_year_file_and_main(tmp_path):
         tmp_path,
         Commodity(symbol="VWCE", ticker="VWCE.DE"),
         [
-            "2026-04-30 price VWCE   145.00 EUR",
-            "2026-04-30 price VWCE   55500.00 HUF",
+            "2026-04-30 price VWCE                     145.00 EUR",
+            "2026-04-30 price VWCE                   55500.00 HUF",
         ],
     )
 
     assert (tmp_path / "2026" / "VWCE.beancount").read_text().splitlines() == [
-        "2026-04-30 price VWCE   145.00 EUR",
-        "2026-04-30 price VWCE   55500.00 HUF",
+        "2026-04-30 price VWCE                     145.00 EUR",
+        "2026-04-30 price VWCE                   55500.00 HUF",
     ]
     assert (tmp_path / "2026" / "main.beancount").read_text() == (
         'include "VWCE.beancount"\n'
@@ -81,8 +81,8 @@ def test_fetch_and_store_prices_writes_fetched_prices(monkeypatch, tmp_path):
 
     assert stored_count == 1
     assert (tmp_path / "2026" / "VWCE.beancount").read_text().splitlines() == [
-        "2026-04-30 price VWCE   145.00 EUR",
-        "2026-04-30 price VWCE   55500.00 HUF",
+        "2026-04-30 price VWCE                     145.00 EUR",
+        "2026-04-30 price VWCE                   55500.00 HUF",
     ]
 
 
@@ -94,7 +94,7 @@ def test_currency_pair_price_lines_include_fetched_direction():
     )
 
     assert lines_by_symbol == {
-        "EUR": ["2026-04-30 price EUR   400.00000000 HUF"],
+        "EUR": ["2026-04-30 price EUR                400.00000000 HUF"],
     }
 
 
@@ -135,9 +135,15 @@ def test_fetch_and_store_prices_writes_currency_rates(monkeypatch, tmp_path):
 
     assert stored_count == 2
     assert (tmp_path / "2026" / "EUR.beancount").read_text() == (
-        "2026-04-30 price EUR   400.00000000 HUF\n"
+        "2026-04-30 price EUR                400.00000000 HUF\n"
     )
     assert (tmp_path / "2026" / "main.beancount").read_text().splitlines() == [
         'include "EUR.beancount"',
         'include "VWCE.beancount"',
     ]
+
+
+def test_format_existing_price_line_aligns_price_columns():
+    assert store_prices.format_existing_price_line(
+        "2024-01-02 price VWCE\t(107.04*382.11) HUF"
+    ) == "2024-01-02 price VWCE            (107.04*382.11) HUF"
