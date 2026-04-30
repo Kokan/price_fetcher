@@ -38,6 +38,24 @@ Run the batch fetcher:
 poetry run python fetch_prices.py 2024 1
 ```
 
+By default the batch fetcher reads commodity directives from
+`commodities.beancount`. If the Beancount commodity name differs from the Yahoo
+symbol, add a `ticker` metadata entry. Commodity directives without `ticker`
+metadata are skipped.
+
+```beancount
+2023-07-01 commodity VWCE
+  name: "Vanguard All-World FTSE ETF"
+  asset-class: "stock"
+  ticker: "VWCE.DE"
+```
+
+Use a different commodity file or converted currencies with:
+
+```bash
+poetry run python fetch_prices.py 2024 1 --commodities ledger.beancount --target-currency EUR --target-currency HUF
+```
+
 Tests
 -----
 

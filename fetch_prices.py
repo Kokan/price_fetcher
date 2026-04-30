@@ -1,8 +1,63 @@
+from dataclasses import dataclass
 from datetime import datetime
 from fetch_price import fetch_first_day_of_month_price
 from ticker import Ticker
 import argparse
+from pathlib import Path
+import re
 from typing import Optional
+
+
+COMMODITY_RE = re.compile(r"^\d{4}-\d{2}-\d{2}\s+commodity\s+(\S+)\s*$")
+METADATA_RE = re.compile(r"^\s+([A-Za-z][\w-]*):\s*(.*?)\s*$")
+
+
+@dataclass(frozen=True)
+class Commodity:
+    symbol: str
+    ticker: str
+
+
+def parse_metadata_value(value: str) -> str:
+    value = value.strip()
+    if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+        return value[1:-1]
+    return value
+
+
+def parse_commodities(path: str | Path) -> list[Commodity]:
+    commodities = []
+    current_symbol = None
+    current_metadata = {}
+
+    def append_current_commodity():
+        if current_symbol is None:
+            return
+
+        ticker = current_metadata.get("ticker")
+        if ticker is None:
+            return
+
+        commodities.append(Commodity(symbol=current_symbol, ticker=ticker))
+
+    for line in Path(path).read_text().splitlines():
+        commodity_match = COMMODITY_RE.match(line)
+        if commodity_match:
+            append_current_commodity()
+            current_symbol = commodity_match.group(1)
+            current_metadata = {}
+            continue
+
+        if current_symbol is None:
+            continue
+
+        metadata_match = METADATA_RE.match(line)
+        if metadata_match:
+            key, value = metadata_match.groups()
+            current_metadata[key] = parse_metadata_value(value)
+
+    append_current_commodity()
+    return commodities
 
 
 def fetch_stock_price(ticker: str, year: int, month: int) -> Optional[Ticker]:
@@ -35,39 +90,25 @@ def convert_prices(
 
 
 def main(args):
-    tickers = {
-        "EUDV.MI": "EUDV",
-        "FWRA.MI": "FWRA",
-        "MOL.BD": "MOL",
-        "KO": "KO",
-        "SPPY.DE": "SPPY",
-        "STRT.BD": "STRT",
-        "VGWD.DE": "VHYL",
-        "VUAA.MI": "VUAA",
-        "VWCE.DE": "VWCE",
-        "WEBN.DE": "WEBN",
-        "L8I3.DE": "CSH",
-        "SPYW.DE": "SPDR",
-        "AMD": "AMD",
-        "EURHUF=X": "EUR",
-        "USDHUF=X": "USD",
-    }
+    commodities = parse_commodities(args.commodities)
+    if not commodities:
+        raise SystemExit(f"No commodities found in {args.commodities}")
 
-    target_currencies = ["EUR", "HUF"]
+    target_currencies = args.target_currencies or ["EUR", "HUF"]
 
-    for ticker in tickers:
-        stock_data = fetch_stock_price(ticker, args.year, args.month)
+    for commodity in commodities:
+        stock_data = fetch_stock_price(commodity.ticker, args.year, args.month)
         if stock_data:
             converted_prices = convert_prices(
                 stock_data, args.year, args.month, target_currencies
             )
             print(
-                f"{stock_data.date} price {tickers[ticker]}   {stock_data.price:.02f} {stock_data.currency}"
+                f"{stock_data.date} price {commodity.symbol}   {stock_data.price:.02f} {stock_data.currency}"
             )
             for currency in target_currencies:
                 if currency in converted_prices:
                     print(
-                        f"{stock_data.date} price {tickers[ticker]}   {converted_prices[currency]:.02f} {currency}"
+                        f"{stock_data.date} price {commodity.symbol}   {converted_prices[currency]:.02f} {currency}"
                     )
 
 
@@ -79,5 +120,17 @@ if __name__ == "__main__":
 
     parser.add_argument("year", type=int, nargs="?", default=datetime.now().year)
     parser.add_argument("month", type=int, nargs="?", default=datetime.now().month)
+    parser.add_argument(
+        "-c",
+        "--commodities",
+        default="commodities.beancount",
+        help="Beancount file containing commodity directives",
+    )
+    parser.add_argument(
+        "--target-currency",
+        action="append",
+        dest="target_currencies",
+        help="Currency to print converted prices for; repeat to specify multiple",
+    )
 
     main(parser.parse_args())

@@ -2,6 +2,7 @@ import pandas
 
 import fetch_price
 import fetch_prices
+from fetch_prices import Commodity
 from ticker import Ticker
 
 
@@ -63,6 +64,32 @@ def test_fetch_first_day_of_month_price_handles_single_level_close(monkeypatch):
     result = fetch_price.fetch_first_day_of_month_price("VWCE.DE", 2024, 1)
 
     assert result == Ticker("VWCE.DE", 42.5, "EUR", "2024-01-02")
+
+
+def test_parse_commodities_uses_ticker_metadata(tmp_path):
+    commodities_file = tmp_path / "commodities.beancount"
+    commodities_file.write_text(
+        """
+;; COMMODITIES
+
+2023-07-01 commodity VWCE
+  name: "Vanguard All-World FTSE ETF"
+  asset-class: "stock"
+  ticker: "VWCE.DE"
+2023-07-01 commodity AMD
+  name: "Advanced Micro Devices"
+  asset-class: "stock"
+2023-07-01 commodity CSH
+  name: "Amundi EUR Overnight Return UCITS ETF Acc"
+  yahoo: "L8I3.DE"
+""".strip()
+    )
+
+    commodities = fetch_prices.parse_commodities(commodities_file)
+
+    assert commodities == [
+        Commodity(symbol="VWCE", ticker="VWCE.DE"),
+    ]
 
 
 def test_convert_prices_skips_missing_exchange_rates(monkeypatch):

@@ -1,0 +1,75 @@
+;; COMMODITIES
+
+;add proper creation day
+2023-07-01 commodity FHSERA
+  name: "Feher Nyul Zrt Class A Shares"
+  asset-class: "stock"
+2023-07-01 commodity FHSERC
+  name: "Feher Nyul Zrt Class C Shares"
+  asset-class: "stock"
+2023-11-06 commodity BRANCSC
+  name: "Brancskozosseg.hu ZRT Class C Shares"
+  asset-class: "stock"
+2023-07-01 commodity VWCE
+  name: "Vanguard All-World FTSE ETF"
+  asset-class: "stock"
+  ticker: "VWCE.DE"
+2024-01-01 commodity STRT
+  name: "STRT Holding Nyilvánosan Működő Részvénytársaság"
+  asset-class: "stock"
+  ticker: "STRT.BD"
+2023-07-01 commodity CSH
+  name: "Amundi EUR Overnight Return UCITS ETF Acc"
+  asset-class: "stock"
+  ticker: "L8I3.DE"
+2023-07-01 commodity EUDV
+  name: "SPDR S&P Euro Dividend Aristocrats"
+  asset-class: "stock"
+  ticker: "EUDV.MI"
+2023-12-01 commodity SPPY
+  name: "SPDR S&P 500 ESG Leaders UCITS ETF (Acc)"
+  asset-class: "stock"
+  ticker: "SPPY.DE"
+2023-07-01 commodity AMD
+  name: "Advanced Micro Devices"
+  asset-class: "stock"
+  ticker: "AMD"
+2023-07-01 commodity KO
+  name: "Coca-Cola"
+  asset-class: "stock"
+  ticker: "KO"
+2023-01-01 commodity FNKO
+  name: "Funko Inc"
+  asset-class: "stock"
+  ticker: "FNKO"
+2023-01-01 commodity MOL
+  name: "MOL Hungarian Oil and Gas Public Limited Company"
+  asset-class: "stock"
+  ticker: "MOL.BD"
+2024-07-01 commodity VUAA
+  name: "Vanguard S&P 500 UCITS ETF USD Accumulation"
+  asset-class: "stock"
+  ticker: "VUAA.MI"
+2024-12-27 commodity VHYL
+  name: "Vanguard FTSE All-World High Dividend Yield UCITS ETF USD Distributing"
+  asset-class: "stock"
+  ticker: "VGWD.DE"
+2025-01-01 commodity FWRA
+  name: "Invesco FTSE All-World UCITS ETF Acc"
+  asset-class: "stock"
+  ticker: "FWRA.MI"
+2024-07-01 commodity NOKIA.UNVEST
+  name: "Unvested share of Nokia Oyj"
+  asset-class: "stock"
+  quote: EUR
+  ticker: "NOKIA.HE"
+2024-07-01 commodity NOKIA
+  name: "Nokia Oyj"
+  asset-class: "stock"
+  quote: EUR
+  ticker: "NOKIA.HE"
+2026-01-01 commodity WEBN
+  name: "Amundi Prime All Country World UCITS ETF Acc"
+  asset-class: "stock"
+  ticker: "WEBN.DE"
+
