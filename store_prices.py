@@ -11,12 +11,17 @@ from fetch_prices import (
 from ticker import Ticker
 
 
+DEFAULT_CURRENCY_PAIRS = (("EUR", "HUF"), ("USD", "HUF"))
+
+
 def parse_date(value: str) -> date:
     return date.fromisoformat(value)
 
 
-def format_price_line(price_date: str, symbol: str, price: float, currency: str) -> str:
-    return f"{price_date} price {symbol}   {price:.02f} {currency}"
+def format_price_line(
+    price_date: str, symbol: str, price: float, currency: str, precision: int = 2
+) -> str:
+    return f"{price_date} price {symbol}   {price:.{precision}f} {currency}"
 
 
 def price_line_key(line: str) -> tuple[str, str, str] | None:
@@ -62,15 +67,63 @@ def price_lines_for_commodity(
     return lines
 
 
-def store_commodity_prices(output_dir: Path, commodity: Commodity, lines: list[str]) -> None:
+def store_price_lines(output_dir: Path, symbol: str, lines: list[str]) -> None:
     if not lines:
         return
 
     year = lines[0].split(maxsplit=1)[0][0:4]
     year_dir = output_dir / year
     year_dir.mkdir(parents=True, exist_ok=True)
-    upsert_price_lines(year_dir / f"{commodity.symbol}.beancount", lines)
+    upsert_price_lines(year_dir / f"{symbol}.beancount", lines)
     update_year_main(year_dir)
+
+
+def store_commodity_prices(output_dir: Path, commodity: Commodity, lines: list[str]) -> None:
+    store_price_lines(output_dir, commodity.symbol, lines)
+
+
+def currency_pair_price_lines(
+    base_currency: str, quote_currency: str, rate_data: Ticker
+) -> dict[str, list[str]]:
+    return {
+        base_currency: [
+            format_price_line(
+                rate_data.date,
+                base_currency,
+                rate_data.price,
+                quote_currency,
+                precision=8,
+            )
+        ],
+    }
+
+
+def fetch_and_store_currency_rates(
+    output_dir: Path, price_date: date, currency_pairs: list[tuple[str, str]]
+) -> int:
+    stored_count = 0
+    lines_by_symbol: dict[str, list[str]] = {}
+
+    for base_currency, quote_currency in currency_pairs:
+        rate_data = fetch_price_for_date(
+            f"{base_currency}{quote_currency}=X", price_date
+        )
+        if rate_data is None:
+            print(f"; Could not retrieve exchange rate: {base_currency}/{quote_currency}")
+            continue
+
+        for symbol, lines in currency_pair_price_lines(
+            base_currency, quote_currency, rate_data
+        ).items():
+            lines_by_symbol.setdefault(symbol, []).extend(lines)
+
+    for symbol, lines in lines_by_symbol.items():
+        store_price_lines(output_dir, symbol, lines)
+        for line in lines:
+            print(line)
+        stored_count += 1
+
+    return stored_count
 
 
 def fetch_and_store_prices(
@@ -78,6 +131,7 @@ def fetch_and_store_prices(
     output_dir: Path,
     price_date: date,
     target_currencies: list[str],
+    currency_pairs: list[tuple[str, str]],
 ) -> int:
     stored_count = 0
     commodities = parse_commodities(commodities_path)
@@ -99,7 +153,17 @@ def fetch_and_store_prices(
             print(line)
         stored_count += 1
 
+    stored_count += fetch_and_store_currency_rates(
+        output_dir, price_date, currency_pairs
+    )
     return stored_count
+
+
+def parse_currency_pair(value: str) -> tuple[str, str]:
+    currencies = value.split(":", maxsplit=1)
+    if len(currencies) != 2 or not all(currencies):
+        raise ValueError("Currency pairs must use BASE:QUOTE format")
+    return currencies[0].upper(), currencies[1].upper()
 
 
 def main() -> None:
@@ -131,14 +195,24 @@ def main() -> None:
         default=None,
         help="Currency to print converted prices for; repeat to specify multiple",
     )
+    parser.add_argument(
+        "--currency-pair",
+        action="append",
+        dest="currency_pairs",
+        default=None,
+        type=parse_currency_pair,
+        help="Currency pair to store as BASE priced in QUOTE",
+    )
     args = parser.parse_args()
 
     target_currencies = args.target_currencies or ["EUR", "HUF"]
+    currency_pairs = args.currency_pairs or list(DEFAULT_CURRENCY_PAIRS)
     fetch_and_store_prices(
         args.commodities,
         args.output_dir,
         args.date,
         target_currencies,
+        currency_pairs,
     )
 
 

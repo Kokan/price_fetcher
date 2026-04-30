@@ -76,10 +76,68 @@ def test_fetch_and_store_prices_writes_fetched_prices(monkeypatch, tmp_path):
         tmp_path,
         date(2026, 4, 30),
         ["EUR", "HUF"],
+        [],
     )
 
     assert stored_count == 1
     assert (tmp_path / "2026" / "VWCE.beancount").read_text().splitlines() == [
         "2026-04-30 price VWCE   145.00 EUR",
         "2026-04-30 price VWCE   55500.00 HUF",
+    ]
+
+
+def test_currency_pair_price_lines_include_fetched_direction():
+    lines_by_symbol = store_prices.currency_pair_price_lines(
+        "EUR",
+        "HUF",
+        Ticker("EURHUF=X", 400.0, "HUF", "2026-04-30"),
+    )
+
+    assert lines_by_symbol == {
+        "EUR": ["2026-04-30 price EUR   400.00000000 HUF"],
+    }
+
+
+def test_fetch_and_store_prices_writes_currency_rates(monkeypatch, tmp_path):
+    commodities_file = tmp_path / "commodities.beancount"
+    commodities_file.write_text(
+        """
+2023-07-01 commodity VWCE
+  ticker: "VWCE.DE"
+""".strip()
+    )
+
+    def fake_fetch_price_for_date(ticker, price_date):
+        prices = {
+            "VWCE.DE": Ticker("VWCE.DE", 145.0, "EUR", "2026-04-30"),
+            "EURHUF=X": Ticker("EURHUF=X", 400.0, "HUF", "2026-04-30"),
+        }
+        return prices[ticker]
+
+    monkeypatch.setattr(
+        store_prices,
+        "fetch_price_for_date",
+        fake_fetch_price_for_date,
+    )
+    monkeypatch.setattr(
+        store_prices,
+        "convert_prices_for_date",
+        lambda stock_data, price_date, target_currencies: {},
+    )
+
+    stored_count = store_prices.fetch_and_store_prices(
+        commodities_file,
+        tmp_path,
+        date(2026, 4, 30),
+        ["EUR", "HUF"],
+        [("EUR", "HUF")],
+    )
+
+    assert stored_count == 2
+    assert (tmp_path / "2026" / "EUR.beancount").read_text() == (
+        "2026-04-30 price EUR   400.00000000 HUF\n"
+    )
+    assert (tmp_path / "2026" / "main.beancount").read_text().splitlines() == [
+        'include "EUR.beancount"',
+        'include "VWCE.beancount"',
     ]

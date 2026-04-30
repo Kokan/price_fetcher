@@ -64,8 +64,12 @@ poetry run python store_prices.py --date 2026-04-30
 
 This writes one file per commodity, for example `2026/VWCE.beancount`, and
 maintains `2026/main.beancount` with includes for that year's commodity files.
+It also stores EUR/HUF and USD/HUF exchange rates, for example
+`2026/EUR.beancount` and `2026/USD.beancount`.
 The GitHub Actions workflow runs this command daily and commits changed price
 files when new prices are available.
+
+Use `--currency-pair BASE:QUOTE` to override the stored exchange-rate pairs.
 
 Tests
 -----
