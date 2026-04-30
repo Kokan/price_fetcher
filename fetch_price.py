@@ -1,11 +1,14 @@
 from datetime import datetime
+from typing import Optional
 from ticker import Ticker, format_json, format_beancount, format_text
 import argparse
 import pandas
 import yfinance
 
 
-def fetch_first_day_of_month_price(ticker: str, year: int, month: int) -> Ticker:
+def fetch_first_day_of_month_price(
+    ticker: str, year: int, month: int
+) -> Optional[Ticker]:
     try:
         first_day_of_month = datetime(year, month, 1)
 
@@ -26,12 +29,18 @@ def fetch_first_day_of_month_price(ticker: str, year: int, month: int) -> Ticker
         if stock_data.empty:
             return None
 
+        first_day_row = stock_data.iloc[0]
         first_day_price = stock_data["Close"].iloc[0]
+        try:
+            price = first_day_price[ticker]
+        except (IndexError, KeyError, TypeError):
+            price = first_day_price
+
         return Ticker(
             ticker,
-            float(first_day_price[ticker]),
+            float(price),
             currency,
-            str(first_day_price.name)[0:10],
+            str(first_day_row.name)[0:10],
         )
 
     except Exception as e:
