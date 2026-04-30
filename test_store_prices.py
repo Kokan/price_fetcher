@@ -54,12 +54,12 @@ def test_store_commodity_prices_writes_year_file_and_main(tmp_path):
         ],
     )
 
-    assert (tmp_path / "2026" / "VWCE.beancount").read_text().splitlines() == [
+    assert (tmp_path / "2026" / "vwce.beancount").read_text().splitlines() == [
         "2026-04-30 price VWCE                     145.00 EUR",
         "2026-04-30 price VWCE                   55500.00 HUF",
     ]
     assert (tmp_path / "2026" / "main.beancount").read_text() == (
-        'include "VWCE.beancount"\n'
+        'include "vwce.beancount"\n'
     )
     assert (tmp_path / "main.beancount").read_text() == (
         'include "2026/main.beancount"\n'
@@ -95,7 +95,7 @@ def test_fetch_and_store_prices_writes_fetched_prices(monkeypatch, tmp_path):
     )
 
     assert stored_count == 1
-    assert (tmp_path / "2026" / "VWCE.beancount").read_text().splitlines() == [
+    assert (tmp_path / "2026" / "vwce.beancount").read_text().splitlines() == [
         "2026-04-30 price VWCE                     145.00 EUR",
         "2026-04-30 price VWCE                   55500.00 HUF",
     ]
@@ -149,12 +149,12 @@ def test_fetch_and_store_prices_writes_currency_rates(monkeypatch, tmp_path):
     )
 
     assert stored_count == 2
-    assert (tmp_path / "2026" / "EUR.beancount").read_text() == (
+    assert (tmp_path / "2026" / "eur.beancount").read_text() == (
         "2026-04-30 price EUR                400.00000000 HUF\n"
     )
     assert (tmp_path / "2026" / "main.beancount").read_text().splitlines() == [
-        'include "EUR.beancount"',
-        'include "VWCE.beancount"',
+        'include "eur.beancount"',
+        'include "vwce.beancount"',
     ]
     assert (tmp_path / "main.beancount").read_text() == (
         'include "2026/main.beancount"\n'

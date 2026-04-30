@@ -145,7 +145,7 @@ def store_price_lines(output_dir: Path, symbol: str, lines: list[str]) -> None:
     year = lines[0].split(maxsplit=1)[0][0:4]
     year_dir = output_dir / year
     year_dir.mkdir(parents=True, exist_ok=True)
-    upsert_price_lines(year_dir / f"{symbol}.beancount", lines)
+    upsert_price_lines(year_dir / f"{symbol.lower()}.beancount", lines)
     update_year_main(year_dir)
     update_prices_main(output_dir)
 
