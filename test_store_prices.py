@@ -32,6 +32,18 @@ def test_upsert_price_lines_replaces_existing_date_currency(tmp_path):
     ]
 
 
+def test_upsert_price_lines_preserves_existing_line_when_amount_is_same(tmp_path):
+    prices_file = tmp_path / "VWCE.beancount"
+    prices_file.write_text("2026-04-30 price VWCE\t145.00 EUR\n")
+
+    store_prices.upsert_price_lines(
+        prices_file,
+        ["2026-04-30 price VWCE                     145.00 EUR"],
+    )
+
+    assert prices_file.read_text() == "2026-04-30 price VWCE\t145.00 EUR\n"
+
+
 def test_store_commodity_prices_writes_year_file_and_main(tmp_path):
     store_prices.store_commodity_prices(
         tmp_path,

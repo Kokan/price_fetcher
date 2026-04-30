@@ -52,16 +52,57 @@ def price_line_key(line: str) -> tuple[str, str, str] | None:
     return parts[0], parts[2], parts[4]
 
 
-def upsert_price_lines(path: Path, new_lines: list[str]) -> None:
-    new_keys = {price_line_key(line) for line in new_lines}
-    existing_lines = path.read_text().splitlines() if path.exists() else []
-    kept_lines = [
-        line
-        for line in existing_lines
-        if price_line_key(line) is None or price_line_key(line) not in new_keys
-    ]
+def price_line_amount(line: str) -> str | None:
+    if price_line_key(line) is None:
+        return None
+    return line.split()[3]
 
-    path.write_text("\n".join(sorted(kept_lines + new_lines)) + "\n")
+
+def upsert_price_lines(path: Path, new_lines: list[str]) -> None:
+    existing_lines = path.read_text().splitlines() if path.exists() else []
+    existing_by_key = {
+        key: line
+        for line in existing_lines
+        if (key := price_line_key(line)) is not None
+    }
+
+    replacements_by_key = {}
+    new_lines_without_key = []
+    for new_line in new_lines:
+        key = price_line_key(new_line)
+        if key is None:
+            new_lines_without_key.append(new_line)
+            continue
+
+        existing_line = existing_by_key.get(key)
+        if (
+            existing_line is not None
+            and price_line_amount(existing_line) == price_line_amount(new_line)
+        ):
+            continue
+
+        replacements_by_key[key] = new_line
+
+    merged_lines = []
+    replaced_keys = set()
+    for existing_line in existing_lines:
+        key = price_line_key(existing_line)
+        if key in replacements_by_key:
+            merged_lines.append(replacements_by_key[key])
+            replaced_keys.add(key)
+        else:
+            merged_lines.append(existing_line)
+
+    merged_lines.extend(new_lines_without_key)
+    merged_lines.extend(
+        line
+        for key, line in replacements_by_key.items()
+        if key not in replaced_keys
+    )
+
+    contents = "\n".join(merged_lines) + "\n"
+    if not path.exists() or path.read_text() != contents:
+        path.write_text(contents)
 
 
 def update_year_main(year_dir: Path) -> None:
