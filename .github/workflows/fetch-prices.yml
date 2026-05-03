@@ -34,22 +34,31 @@ jobs:
       - name: Validate generated Beancount files
         run: uv run python validate_prices.py
 
-      - name: Commit price updates
+      - name: Commit or Print Price Updates
         run: |
           shopt -s nullglob
           price_files=(prices/[0-9][0-9][0-9][0-9]/*.beancount)
+
           if [ ${#price_files[@]} -eq 0 ]; then
             echo "No price files were generated."
             exit 0
           fi
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
           git add -- "${price_files[@]}"
+
+          # Check if there are actual changes
           if git diff --cached --quiet; then
-            echo "No price updates to commit."
-          else
+            echo "No price updates detected."
+            exit 0
+          fi
+
+          if [ "$GITHUB_REF_NAME" == "master" ]; then
+            echo "On master branch: Committing updates..."
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git commit -m "Update daily prices"
             git push
+          else
+            echo "Not on master branch ($GITHUB_REF_NAME): Printing diff instead of committing."
+            git diff --cached --color
           fi
